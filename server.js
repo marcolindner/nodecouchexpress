@@ -1,6 +1,8 @@
 //setup Dependencies
 var connect = require('connect')
     , express = require('express')
+    , cradle = require('cradle')
+    , connection = new(cradle.Connection)('http://localhost','5984')
     , io = require('socket.io')
     , port = (process.env.PORT || 8081);
 
@@ -15,6 +17,10 @@ server.configure(function(){
     server.use(connect.static(__dirname + '/static'));
     server.use(server.router);
 });
+
+// Server URL
+
+var serverURl = "http://mbp-marcol-0712.local:"+port;
 
 //setup the errors
 server.error(function(err, req, res, next){
@@ -37,19 +43,6 @@ server.error(function(err, req, res, next){
 });
 server.listen( port);
 
-//Setup Socket.IO
-var io = io.listen(server);
-io.sockets.on('connection', function(socket){
-  console.log('Client Connected');
-  socket.on('message', function(data){
-    socket.broadcast.emit('server_message',data);
-    socket.emit('server_message',data);
-  });
-  socket.on('disconnect', function(){
-    console.log('Client Disconnected.');
-  });
-});
-
 
 ///////////////////////////////////////////
 //              Routes                   //
@@ -60,10 +53,29 @@ io.sockets.on('connection', function(socket){
 server.get('/', function(req,res){
   res.render('index.jade', {
     locals : { 
-              title : 'Your Page Title'
+              title : 'Call me root!'
              ,description: 'Your Page Description'
              ,author: 'Your Name'
-             ,analyticssiteid: 'XXXXXXX' 
+            }
+  });
+});
+
+server.get('/route1', function(req,res){
+  res.render('route1.jade', {
+    locals : { 
+              title : 'Call me root!'
+             ,description: 'Your Page Description'
+             ,author: 'Your Name'
+            }
+  });
+});
+
+server.get('/route2', function(req,res){
+  res.render('route2.jade', {
+    locals : { 
+              title : 'Call me root!'
+             ,description: 'Your Page Description'
+             ,author: 'Your Name'
             }
   });
 });
